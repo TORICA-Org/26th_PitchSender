@@ -23,8 +23,12 @@
 auto& mySerial = Serial;
 auto& myWire = Wire;
 
-constexpr uint8_t LSM6_ADDR_GND = 0x6A;
-constexpr uint8_t LSM6_ADDR_VCC = 0x6B;
+constexpr uint8_t SDA_PIN = 21;
+constexpr uint8_t SCL_PIN = 22;
+constexpr int CLOCK_SPEED = 400000;
+
+constexpr uint8_t LSM6_ADDR_GND = 0x6A; // J3を短絡したとき(SDO/SA0 : LOW)のアドレス
+constexpr uint8_t LSM6_ADDR_VCC = 0x6B; // J2を短絡したとき(SDO/SA : HIGH)のアドレス
 uint8_t lsm6_addr = 0;
 
 constexpr uint8_t REG_WHO_AM_I = 0x0F;
@@ -80,10 +84,10 @@ void readSensor(float& gx, float& gy, float& gz, float& ax, float& ay, float& az
   az = static_cast<float>(buf2[5]) * 0.000244;
 }
 
-void initIMU() {
-  myWire.begin();
-  mySerial.begin(115200);
-  while (!mySerial);
+void init_imu() {
+  myWire.begin(SDA_PIN, SCL_PIN, CLOCK_SPEED);
+  //mySerial.begin(115200);
+  //while (!mySerial);
   delay(100);
 
   mySerial.println("\n\nStart!");

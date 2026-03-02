@@ -1,6 +1,5 @@
 #pragma once
 
-#include "AudioTools.h"
-#include "AudioTools/Communication/A2DPStream.h"
+#include <BluetoothA2DPSource.h>
 
-void initBT();
+void init_bt();

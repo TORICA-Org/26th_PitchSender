@@ -16,7 +16,7 @@ float gyroY_offset = 0;
 unsigned long prevMicros = 0;
 
 
-void initKalman() {
+void init_kalman() {
   // --- 1. ジャイロのキャリブレーション (X, Yのみ) ---
   // 起動時は静止させてください
   const int num_samples = 1000;
@@ -46,7 +46,7 @@ void initKalman() {
 }
 
 
-float getEstPitch() {
+float get_est_pitch() {
   // --- 時間計算 (dt) ---
   unsigned long currentMicros = micros();
   float dt = (float)(currentMicros - prevMicros) / 1000000.0;
