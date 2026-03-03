@@ -5,22 +5,41 @@
 // 4. `CP210x Windows Drivers`をダウンロード
 // 5. 解凍し`CP210xVCPInstaller_x64.exe`を実行（Windowsの場合）
 
-//#include "MyBluetooth.h"
+#include "MyBluetooth.h"
 #include "Frequency.h"
 #include "MyIMU.h"
-#include "MyKalman.h"
 
 void setup() {
   Serial.begin(115200);
   while(!Serial);
   delay(3000);
-  //init_bt();
+  
+  Serial.println("Ready!");
+  float frequency = get_frequency("C3");
+  Serial.print("Frequency: ");
+  Serial.println(frequency);
+  set_sound(frequency, 1.0);
+  Serial.println("Sound setted!");
+  //init_bt("C2");
+  Serial.println("Initialized!");
+
   init_imu();
-  init_kalman();
 }
 
 void loop() {
-  Serial.println(get_est_pitch());
-  delay(100);
+  if(Serial.available()){
+    String str = Serial.readStringUntil('\n');
+    char buff[3];
+    str.toCharArray(buff, 3);
+    Serial.print("ChangeTo: ");
+    Serial.println(buff);
+    float frequency = get_frequency(buff);
+    Serial.print("Frequency: ");
+    Serial.println(frequency);
+    set_sound(frequency, 1.0);
+  }
+
+  refresh_euler_angles();
+  Serial.printf("%.5f %.5f %.5f\n", angles.roll, angles.pitch, angles.yaw);
 }
 

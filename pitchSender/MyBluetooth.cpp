@@ -12,7 +12,8 @@ constexpr float pi_2 = PI * 2.0;
 // gives radians changed per sample period.
 // const float deltaAngle = angular_frequency / 44100.0;
 
-volatile float deltaAngle = 0.0;
+float deltaAngle = 0.0;
+
 
 void set_sound(float freq, float interval) {
 
@@ -22,6 +23,7 @@ void set_sound(float freq, float interval) {
 }
 
 BluetoothA2DPSource a2dp_source;
+
 
 // The supported audio codec in ESP32 A2DP is SBC. SBC audio stream is encoded
 // from PCM data normally formatted as 44.1kHz sampling rate, two-channel 16-bit sample data
@@ -43,9 +45,16 @@ int32_t get_data_frames(Frame *frame, int32_t frame_count) {
 }
 
 
-void init_bt() {
-  a2dp_source.set_auto_reconnect(false);
+// for esp_a2d_connection_state_t see https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/bluetooth/esp_a2dp.html#_CPPv426esp_a2d_connection_state_t
+void connection_state_changed(esp_a2d_connection_state_t state, void *ptr){
+  Serial.println(a2dp_source.to_str(state));
+}
+
+
+void init_bt(const char *bt_name) {
+  a2dp_source.set_auto_reconnect(true);
   a2dp_source.set_data_callback_in_frames(get_data_frames);
-  a2dp_source.set_volume(30);
-  a2dp_source.start("LEXON MINO L");  
+  a2dp_source.set_on_connection_state_changed(connection_state_changed);
+  a2dp_source.set_volume(50);
+  a2dp_source.start(bt_name);
 }
