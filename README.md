@@ -11,3 +11,9 @@
 1. LSM6DSV16Xの高度なセンサーフュージョン機能（Sensor Fusion Low-Power : SFLP）を使用して，クオータニオンを取得．
 2. クオータニオンをオイラー角に変換し，グローバルに宣言されたオイラー角用の構造体（angles）を更新
 3. 取得したピッチ（angles.pitch）に応じて，BTイヤホンに送信する音の周波数（音程）と間隔を変更．
+
+# ソフトウェアの詳細
+- サンプルコードは公式に示されている．(-> )
+- LSM6DSV16XのSFLPにより計算されたクオータニオンはFIFOに保存される．
+  - FIFOに保存されるデータは`xyz`のみで`w`は失われるため，ソフトウェア側で復元する必要がある．(-> )
+  - 出力されるクオータニオンは半精度浮動小数点数（Half precision floating-point）なので`float`（単精度浮動小数点数）として使うには変換処理が必要．(-> https://github.com/STMicroelectronics/lsm6dsv16x-pid/blob/main/lsm6dsv16x_reg.c#L200-L244)
