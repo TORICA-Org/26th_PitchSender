@@ -1,3 +1,3 @@
 #pragma once
 
-float get_frequency(const char *);
+float frequency_get(const char *);

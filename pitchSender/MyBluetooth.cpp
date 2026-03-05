@@ -13,9 +13,10 @@ constexpr float pi_2 = PI * 2.0;
 // const float deltaAngle = angular_frequency / 44100.0;
 
 float deltaAngle = 0.0;
+float interval = 0.0;
 
 
-void set_sound(float freq, float interval) {
+void bt_set_sound(float freq, float interval) {
 
   float angular_freq = pi_2 * freq;
 
@@ -51,7 +52,7 @@ void connection_state_changed(esp_a2d_connection_state_t state, void *ptr){
 }
 
 
-void init_bt(const char *bt_name) {
+void bt_init(const char *bt_name) {
   a2dp_source.set_auto_reconnect(true);
   a2dp_source.set_data_callback_in_frames(get_data_frames);
   a2dp_source.set_on_connection_state_changed(connection_state_changed);

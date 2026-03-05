@@ -5,5 +5,5 @@ struct EulerAngles {  // オイラー角用の構造体.
 };
 extern volatile EulerAngles angles;
 
-void init_imu();
-void refresh_euler_angles();
+void imu_init();
+void imu_refresh_euler();

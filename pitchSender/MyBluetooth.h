@@ -2,5 +2,5 @@
 
 #include <BluetoothA2DPSource.h>
 
-void init_bt(const char *);
-void set_sound(float freq, float interval);
+void bt_init(const char *);
+void bt_set_sound(float freq, float interval);

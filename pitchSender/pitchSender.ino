@@ -9,37 +9,45 @@
 #include "Frequency.h"
 #include "MyIMU.h"
 
+constexpr float TOLERANCE = 3.0;
+
+enum {
+  TAIL_UP,
+  LEVEL,
+  TAIL_DOWN
+} attitude = LEVEL;
+
 void setup() {
   Serial.begin(115200);
-  while(!Serial);
-  delay(3000);
-  
-  Serial.println("Ready!");
-  float frequency = get_frequency("C3");
-  Serial.print("Frequency: ");
-  Serial.println(frequency);
-  set_sound(frequency, 1.0);
-  Serial.println("Sound setted!");
-  //init_bt("C2");
-  Serial.println("Initialized!");
-
-  init_imu();
+  bt_init("BTW13X");
+  imu_init();
 }
 
 void loop() {
-  if(Serial.available()){
-    String str = Serial.readStringUntil('\n');
-    char buff[3];
-    str.toCharArray(buff, 3);
-    Serial.print("ChangeTo: ");
-    Serial.println(buff);
-    float frequency = get_frequency(buff);
-    Serial.print("Frequency: ");
-    Serial.println(frequency);
-    set_sound(frequency, 1.0);
+  imu_refresh_euler();
+  Serial.printf("%.5f %.5f %.5f\n", angles.roll, angles.pitch, angles.yaw);
+
+  if (angles.pitch < -1 * TOLERANCE) {
+    attitude = TAIL_UP;
+  }
+  else if (angles.pitch > TOLERANCE) {
+    attitude = TAIL_DOWN;
+  }
+  else {
+    attitude = LEVEL;
   }
 
-  refresh_euler_angles();
-  Serial.printf("%.5f %.5f %.5f\n", angles.roll, angles.pitch, angles.yaw);
+  switch (attitude) {
+    case TAIL_UP: {
+      bt_set_sound(frequency_get("G4"), 1.0);
+    }
+    case LEVEL: {
+      bt_set_sound(frequency_get("C4"), 1.0);
+    }
+    case TAIL_DOWN: {
+      bt_set_sound(frequency_get("G3"), 1.0);
+    }
+  }
+  delayMicroseconds(10);
 }
 

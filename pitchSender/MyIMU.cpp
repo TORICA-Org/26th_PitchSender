@@ -54,6 +54,11 @@ constexpr uint8_t REG_FIFO_DATA_OUT = 0x79;      // FIFOデータの開始位置
 
 constexpr uint8_t TAG_FIFO_QUATERNION = 0x13;  // クオータニオンのFIFOタグ.
 
+#define BDR_240HZ 0b01110111
+constexpr uint8_t BDR = BDR_240HZ; // FIFOのBatch Data Rate
+#define ODR_240HZ 0b00000111
+constexpr uint8_t ODR = ODR_240HZ; // Output Data Rate
+
 struct Quaternion {  // クオータニオン用の構造体.
   float w, x, y, z;
 };
@@ -61,12 +66,14 @@ volatile Quaternion qua;
 
 volatile EulerAngles angles;
 
+
 void writeReg(uint8_t reg, uint8_t val) {
   myWire.beginTransmission(lsm6_addr);
   myWire.write(reg);
   myWire.write(val);
   myWire.endTransmission();
 }
+
 
 void readRegs(uint8_t startReg, uint8_t* buf, uint8_t len) {
   myWire.beginTransmission(lsm6_addr);
@@ -76,11 +83,12 @@ void readRegs(uint8_t startReg, uint8_t* buf, uint8_t len) {
   for (uint8_t i = 0; i < len; i++) { buf[i] = myWire.read(); }
 }
 
+
 bool lsm6_init() {
   // デバイス固有IDチェック
   uint8_t who;
   readRegs(REG_WHO_AM_I, &who, 1);
-  mySerial.print("WHO_AM_I = 0x");
+  // mySerial.print("WHO_AM_I = 0x");
   mySerial.println(who, HEX);
   if (who != 0x70) { return false; }
 
@@ -99,15 +107,15 @@ bool lsm6_init() {
   writeReg(REG_FUNC_CFG_ACCESS, 0b00000000);     // 組み込み関数の設定へのアクセスを停止.
 
   // ===== FIFO =====
-  writeReg(REG_FIFO_CTRL3, 0b10011001);  // BDR_GY=960Hz, BDR_XL=960Hz
+  writeReg(REG_FIFO_CTRL3, BDR);
   writeReg(REG_FIFO_CTRL4, 0b00000110);  // FIFOを連続書込モードに設定.
 
   // ===== SENSOR =====
   // 初期設定
   // writeReg(REG_CTRL1, 0b00001001);
-  writeReg(REG_CTRL1, 0b10011001);  // ODR=960Hz
+  writeReg(REG_CTRL1, ODR);
   // writeReg(REG_CTRL2, 0b00001001);
-  writeReg(REG_CTRL2, 0b10011001);  // ODR=960Hz
+  writeReg(REG_CTRL2, ODR);
   writeReg(REG_CTRL6, 0b00000100);
   writeReg(REG_CTRL8, 0b00000000);  // 低周波フィルタOFF
 
@@ -119,36 +127,14 @@ bool lsm6_init() {
   return true;
 }
 
-void Normalize();
-void ToEulerAngles();
 
-void quick_test() {
-  // 例：Z軸に +30° 回転の四元数（度 → ラジアン）
-  float deg = 30.0f;
-  float rad = deg * PI / 180.0f;
-  qua.w = cosf(rad / 2.0f);  // ≈ 0.9659
-  qua.x = 0.0f;
-  qua.y = 0.0f;
-  qua.z = sinf(rad / 2.0f);  // ≈ 0.2588
-
-  Normalize();
-  ToEulerAngles();
-
-  Serial.print("TEST Euler: ");
-  Serial.print(angles.roll, 3);
-  Serial.print(" ");
-  Serial.print(angles.pitch, 3);
-  Serial.print(" ");
-  Serial.println(angles.yaw, 3);  // ← だいたい (0, 0, 30) 付近になる
-}
-
-void init_imu() {
+void imu_init() {
   myWire.begin(SDA_PIN, SCL_PIN, CLOCK_SPEED);
   //mySerial.begin(115200);
   //while (!mySerial);
   delay(100);
 
-  mySerial.println("\n\nStart!");
+  // mySerial.println("\n\nStart!");
 
   myWire.beginTransmission(LSM6_ADDR_GND);
   if (myWire.endTransmission() == 0) {
@@ -182,7 +168,7 @@ void init_imu() {
 }
 
 
-void Normalize() {  // クオータニオンを正規化.
+void normalize() {  // クオータニオンを正規化.
   float n = sqrt(qua.w * qua.w + qua.x * qua.x + qua.y * qua.y + qua.z * qua.z);
   if (n > 0.0f) {
     float inv = 1.0f / n;
@@ -193,7 +179,7 @@ void Normalize() {  // クオータニオンを正規化.
   }
 }
 
-void ToEulerAngles() {
+void to_euler_angles() {
   float sinr_cosp = 2.0f * (qua.w * qua.x + qua.y * qua.z);
   float cosr_cosp = 1.0f - 2.0f * (qua.x * qua.x + qua.y * qua.y);
   angles.roll = atan2(sinr_cosp, cosr_cosp) * 180.0f / PI;
@@ -241,7 +227,7 @@ static inline float half_to_float(uint16_t h) {
 }
 
 
-void refresh_euler_angles() {
+void imu_refresh_euler() {
   uint8_t status[2];
   readRegs(0x1B, status, 2);
   uint16_t unread_words = status[0] | ((status[1] & 0x03) << 8);
@@ -297,8 +283,8 @@ void refresh_euler_angles() {
     qua.y = qy;
     qua.z = qz;
 
-    Normalize();
-    ToEulerAngles();
+    normalize();
+    to_euler_angles();
   }
 
   // Serial.print("Qua(w, x, y, z): ");

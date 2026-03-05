@@ -9,7 +9,7 @@ constexpr float FREQ_E1 = 41.203;
 constexpr float FREQ_F1 = 43.654;
 constexpr float FREQ_G1 = 48.999;
 
-float get_frequency(const char *key) {
+float frequency_get(const char *key) {
   char pitch_name = key[0];
   String octave_char = String(key[1]);
   int octave = octave_char.toInt();
