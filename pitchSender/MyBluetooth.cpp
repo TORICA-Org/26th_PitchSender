@@ -46,6 +46,18 @@ int32_t get_data_frames(Frame *frame, int32_t frame_count) {
 }
 
 
+/**
+ * @brief Buetooth A2DP connection states
+ * @ingroup a2dp
+ *
+enum esp_a2d_connection_state_t {
+    ESP_A2D_CONNECTION_STATE_DISCONNECTED = 0, /*!< connection released  *
+    ESP_A2D_CONNECTION_STATE_CONNECTING,       /*!< connecting remote device *
+    ESP_A2D_CONNECTION_STATE_CONNECTED,        /*!< connection established *
+    ESP_A2D_CONNECTION_STATE_DISCONNECTING     /*!< disconnecting remote device *
+} ;
+*/
+
 // for esp_a2d_connection_state_t see https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/bluetooth/esp_a2dp.html#_CPPv426esp_a2d_connection_state_t
 void connection_state_changed(esp_a2d_connection_state_t state, void *ptr){
   Serial.println(a2dp_source.to_str(state));
@@ -53,9 +65,15 @@ void connection_state_changed(esp_a2d_connection_state_t state, void *ptr){
 
 
 void bt_init(const char *bt_name) {
+  bt_set_sound(32.703 * pow(2, 3), 1.0);
   a2dp_source.set_auto_reconnect(true);
   a2dp_source.set_data_callback_in_frames(get_data_frames);
   a2dp_source.set_on_connection_state_changed(connection_state_changed);
   a2dp_source.set_volume(50);
   a2dp_source.start(bt_name);
+  delay(100);
+  while(!a2dp_source.is_connected()) {
+    Serial.print(".");
+    delay(1000);
+  }
 }

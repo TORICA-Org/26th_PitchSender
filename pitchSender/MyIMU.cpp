@@ -88,7 +88,7 @@ bool lsm6_init() {
   // デバイス固有IDチェック
   uint8_t who;
   readRegs(REG_WHO_AM_I, &who, 1);
-  // mySerial.print("WHO_AM_I = 0x");
+  mySerial.print("WHO_AM_I = 0x");
   mySerial.println(who, HEX);
   if (who != 0x70) { return false; }
 

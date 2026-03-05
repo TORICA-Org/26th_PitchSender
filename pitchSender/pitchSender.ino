@@ -19,22 +19,34 @@ enum {
 
 void setup() {
   Serial.begin(115200);
-  bt_init("BTW13X");
+  bt_init("FS-BTHD01");
   imu_init();
 }
 
 void loop() {
   imu_refresh_euler();
-  Serial.printf("%.5f %.5f %.5f\n", angles.roll, angles.pitch, angles.yaw);
+  // Serial.printf("%.5f %.5f %.5f\n", angles.roll, angles.pitch, angles.yaw);
+
+  String status;
 
   if (angles.pitch < -1 * TOLERANCE) {
     attitude = TAIL_UP;
+    status = "TAIL_UP";
   }
   else if (angles.pitch > TOLERANCE) {
     attitude = TAIL_DOWN;
+    status = "TAIL_DOWN";
   }
   else {
     attitude = LEVEL;
+    status = "LEVEL";
+  }
+
+  static unsigned long pre_time = 0;
+  unsigned long now_time = millis();
+  if (now_time - pre_time >= 500) {
+    Serial.println(status);
+    pre_time = now_time;
   }
 
   switch (attitude) {
