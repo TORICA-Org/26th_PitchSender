@@ -139,4 +139,5 @@ void bt_init(const char *bt_name) {
   }
   */
   a2dp_source.set_auto_reconnect(true);
+  Serial.println("Bluetooth initialized.");
 }

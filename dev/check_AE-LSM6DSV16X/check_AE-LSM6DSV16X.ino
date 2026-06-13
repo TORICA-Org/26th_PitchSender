@@ -80,6 +80,8 @@ void readSensor(float& gx, float& gy, float& gz, float& ax, float& ay, float& az
 
 void setup() {
   myWire.begin();
+  myWire.setSDA(4);
+  myWire.setSCL(5);
   mySerial.begin(115200);
   while (!mySerial);
   delay(100);
@@ -87,6 +89,8 @@ void setup() {
   mySerial.println("\n\nStart!");
 
   myWire.beginTransmission(LSM6_ADDR_GND);
+
+  delay(1000);
   if (myWire.endTransmission() == 0) {
     mySerial.print("LSM6DSV16X found.\naddress: 0x");
     mySerial.println(LSM6_ADDR_GND, 16);
