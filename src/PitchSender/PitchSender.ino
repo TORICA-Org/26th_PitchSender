@@ -123,6 +123,6 @@ void loop() {
 
   Serial.printf("%0.7f, %0.7f\n", bno_angles.pitch, lsm_angles.pitch);
 
-  delayMicroseconds(1);
+  delay(1);
 }
 
