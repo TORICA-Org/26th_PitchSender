@@ -188,11 +188,6 @@ void to_euler_angles() {
   float siny_cosp = 2.0f * (qua.w * qua.z + qua.x * qua.y);
   float cosy_cosp = 1.0f - 2.0f * (qua.y * qua.y + qua.z * qua.z);
   lsm_angles.yaw = atan2(siny_cosp, cosy_cosp) * 180.0f / PI;
-
-  // フラチ用水平器では前後が逆
-  // よって，ピッチ，ロールが正負反転
-  lsm_angles.pitch = -1 * lsm_angles.pitch;
-  lsm_angles.roll = -1 * lsm_angles.roll;
 }
 
 

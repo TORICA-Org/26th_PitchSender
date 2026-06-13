@@ -73,7 +73,7 @@ void loop() {
 
   String status;
 
-  float accurate_pitch = lsm_angles.pitch + CAL;
+  float accurate_pitch = -1 * (lsm_angles.pitch + CAL);
 
   if (accurate_pitch < OFFSET - TOLERANCE) {
     attitude = TAIL_UP;
@@ -121,7 +121,7 @@ void loop() {
     //   bt_status, OFFSET, status, angles.roll, accurate_pitch, angles.yaw);
   }
 
-  Serial.printf("%0.7f, %0.7f\n", bno_angles.pitch, lsm_angles.pitch);
+  Serial.printf("%0.7f, %0.7f\n", -1 * bno_angles.pitch, -1 * lsm_angles.pitch);
 
   delay(1);
 }
