@@ -36,6 +36,7 @@ void queueLogdata(){
     data.data_air_gps_altitude_m = data_air_gps_altitude_m;
     data.data_air_gps_groundspeed_ms = data_air_gps_groundspeed_ms;
     data.data_air_gps_heading_deg = data_air_gps_heading_deg;
+    data.data_air_gps_satellites = data_air_gps_satellites;
     data.data_air_sdp_differentialPressure_Pa = data_air_sdp_differentialPressure_Pa;
     data.data_air_sdp_airspeed_ms = data_air_sdp_airspeed_ms;
     data.data_air_AoA_angle_deg = data_air_AoA_angle_deg;

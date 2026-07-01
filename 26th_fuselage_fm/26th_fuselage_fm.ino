@@ -15,6 +15,7 @@ LED2: UARTHelper_fslg.cppで使用
 #include "SD_wrapper.h"
 #include "UARTHelper_fslg.h"
 #include "parameters.h"
+#include "speaker_wrapper.h"
 
 
 TaskHandle_t thp[2];  // マルチスレッドのタスクハンドル格納用
@@ -83,9 +84,16 @@ void Core0_Task(void *args){
     }
 
     // デバッグ用
-    // printTaskStats();
-    Serial.println(data_fslg_lsm_roll);
+    takeoff = true;
+    urm_is_reliable = true;
+    data_under_urm_altitude_m = 0.6;
+    data_air_sdp_airspeed_ms = 10.0;
 
+    run_speaker();
+
+    // デバッグ用
+    // printTaskStats();
+    // Serial.println(data_fslg_lsm_roll);
     // Serial.println("Core0 running");
 
   }

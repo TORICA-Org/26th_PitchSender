@@ -35,11 +35,11 @@ void flashHeader() {
     for (int i = 0; i < 4 /* case0~3まで実行 */; i++) {
 
       switch (i) {
-        case 0:  // 12個
+        case 0:  // 13個
           {
             str[0] = "time_ms,takeoff,urm_is_reliable,data_air_gps_hour,";                                                         // 4個
             str[1] = "data_air_gps_minute,data_air_gps_second,data_air_gps_centisecond,data_air_gps_latitude_deg,";             // 4個
-            str[2] = "data_air_gps_longitude_deg,data_air_gps_altitude_m,data_air_gps_groundspeed_ms,data_air_gps_heading_deg,";  // 4個
+            str[2] = "data_air_gps_longitude_deg,data_air_gps_altitude_m,data_air_gps_groundspeed_ms,data_air_gps_heading_deg,data_air_gps_satellites,";  // 4個
             break;
           }
         case 1:
@@ -88,13 +88,13 @@ void addDataToSDBuf(const LogData& data, int flash_mode) {
   if (SD_is_active) {
     memset(SD_BUF, 0, sizeof(SD_BUF));  //SD_BUFを0で初期化
 
-    switch (flash_mode) {  // 計53個
-      case 0:              // 計12個
+    switch (flash_mode) {  // 計54個
+      case 0:              // 計13個
         {
-          snprintf(SD_BUF, sizeof(SD_BUF), "%lu,%d,%d,%u,%u,%u,%u,%.7f,%.7f,%.2f,%.2f,%.1f,",
+          snprintf(SD_BUF, sizeof(SD_BUF), "%lu,%d,%d,%u,%u,%u,%u,%.7f,%.7f,%.2f,%.2f,%.1f,%u,",
                   data.time_ms, data.takeoff, data.urm_is_reliable, data.data_air_gps_hour,                                                       // 4個
                   data.data_air_gps_minute, data.data_air_gps_second, data.data_air_gps_centisecond, data.data_air_gps_latitude_deg,              // 4個
-                  data.data_air_gps_longitude_deg, data.data_air_gps_altitude_m, data.data_air_gps_groundspeed_ms, data.data_air_gps_heading_deg  // 4個
+                  data.data_air_gps_longitude_deg, data.data_air_gps_altitude_m, data.data_air_gps_groundspeed_ms, data.data_air_gps_heading_deg,data_air_gps_satellites  // 5個
           );
           sd.add_str(SD_BUF);
           // sd.flash();
@@ -173,13 +173,13 @@ void flashSD(int flash_mode) {
   if (SD_is_active) {
     memset(SD_BUF, 0, sizeof(SD_BUF));  //SD_BUFを0で初期化
 
-    switch (flash_mode) {  // 計53個
-      case 0:              // 計12個
+    switch (flash_mode) {  // 計54個
+      case 0:              // 計13個
         {
-          sprintf(SD_BUF, "%lu,%d,%d,%u,%u,%u,%u,%.7f,%.7f,%.2f,%.2f,%.1f,",
+          sprintf(SD_BUF, "%lu,%d,%d,%u,%u,%u,%u,%.7f,%.7f,%.2f,%.2f,%.1f,%u,",
                   time_ms, takeoff, urm_is_reliable, data_air_gps_hour,                                                       // 4個
                   data_air_gps_minute, data_air_gps_second, data_air_gps_centisecond, data_air_gps_latitude_deg,              // 4個
-                  data_air_gps_longitude_deg, data_air_gps_altitude_m, data_air_gps_groundspeed_ms, data_air_gps_heading_deg  // 4個
+                  data_air_gps_longitude_deg, data_air_gps_altitude_m, data_air_gps_groundspeed_ms, data_air_gps_heading_deg,data_air_gps_satellites  // 5個
           );
           sd.add_str(SD_BUF);
           sd.flash();

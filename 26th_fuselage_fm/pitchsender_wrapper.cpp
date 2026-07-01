@@ -1,7 +1,7 @@
 #include "pitchsender_wrapper.h"
 
 // 許容誤差（±TOLERANCE[deg]まで許容する）.
-constexpr float TOLERANCE = 3.0;  // degree[°]
+constexpr float TOLERANCE = 0.2;  // degree[°]
 
 enum {
   TAIL_UP,
@@ -12,7 +12,8 @@ enum {
 void pitchsender_init() {
   // IMU初期化とBluetoothデバイス初期化
   imu_init();
-  bt_init("Echo Buds 00UG");
+  bt_init("WF-C510");
+  // bt_init("Echo Buds 00UG");
 }
 
 
@@ -50,8 +51,8 @@ void pitchsender_loop() {
       }
     case TAIL_DOWN:
       {
-        freq = frequency_get("A4");
-        interval = 0.05;
+        freq = frequency_get("G5");
+        interval = 0.1;
         break;
       }
   }
@@ -62,7 +63,8 @@ void pitchsender_loop() {
   unsigned long cur = millis();
   if (cur - prev > 1000) {
     prev = cur;
-    Serial.printf("[%s | %s]  (%.5f, %.5f, %.5f)\n", bt_status, status, angles.roll, angles.pitch, angles.yaw);
+    // for debug
+    // Serial.printf("[%s | %s]  (%.5f, %.5f, %.5f)\n", bt_status, status, angles.roll, angles.pitch, angles.yaw);
   }
 
   // 10ms周期のループはxTaskCreatePinnedToCore()で管理する

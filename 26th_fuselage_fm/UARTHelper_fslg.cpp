@@ -69,7 +69,7 @@ void receiveLog() {
   // エアデータから受信
   static unsigned long int last_bico_time_ms = 0;
   int readnum_bico = Bico_UART.readUART();
-  const int bico_data_num = 29;  //正常な場合のデータ受信数
+  const int bico_data_num = 30;  //正常な場合のデータ受信数
 
   if (readnum_bico == bico_data_num) {
     
@@ -78,9 +78,9 @@ void receiveLog() {
     last_bico_time_ms = millis();
     //受信データを格納
     // 受信データを格納
-    // 1回目の受信 12個
+    // 1回目の受信 13個
     time_ms = Bico_UART.UART_data[0];
-    takeoff = Bico_UART.UART_data[1];
+    takeoff = static_cast<bool>(Bico_UART.UART_data[1]);
     urm_is_reliable = static_cast<bool>(Bico_UART.UART_data[2]);
     data_air_gps_hour = Bico_UART.UART_data[3];
     data_air_gps_minute = Bico_UART.UART_data[4];
@@ -91,27 +91,28 @@ void receiveLog() {
     data_air_gps_altitude_m = Bico_UART.UART_data[9];
     data_air_gps_groundspeed_ms = Bico_UART.UART_data[10];
     data_air_gps_heading_deg = Bico_UART.UART_data[11];
+    data_air_gps_satellites = Bico_UART.UART_data[12];
 
     // 2回目の受信 11個
-    filtered_bmp_altitude_m = Bico_UART.UART_data[12];
-    filtered_urm_altitude_m = Bico_UART.UART_data[13];
-    filtered_airspeed_ms = Bico_UART.UART_data[14];
-    data_air_bmp_pressure_hPa = Bico_UART.UART_data[15];
-    data_air_bmp_temperature_deg = Bico_UART.UART_data[16];
-    data_air_bmp_altitude_m = Bico_UART.UART_data[17];
-    data_air_sdp_differentialPressure_Pa = Bico_UART.UART_data[18];
-    data_air_sdp_airspeed_ms = Bico_UART.UART_data[19];
-    data_air_AoA_angle_deg = Bico_UART.UART_data[20];
-    data_air_AoS_angle_deg = Bico_UART.UART_data[21];
-    data_ics_angle = Bico_UART.UART_data[22];
+    filtered_bmp_altitude_m = Bico_UART.UART_data[13];
+    filtered_urm_altitude_m = Bico_UART.UART_data[14];
+    filtered_airspeed_ms = Bico_UART.UART_data[15];
+    data_air_bmp_pressure_hPa = Bico_UART.UART_data[16];
+    data_air_bmp_temperature_deg = Bico_UART.UART_data[17];
+    data_air_bmp_altitude_m = Bico_UART.UART_data[18];
+    data_air_sdp_differentialPressure_Pa = Bico_UART.UART_data[19];
+    data_air_sdp_airspeed_ms = Bico_UART.UART_data[20];
+    data_air_AoA_angle_deg = Bico_UART.UART_data[21];
+    data_air_AoS_angle_deg = Bico_UART.UART_data[22];
+    data_ics_angle = Bico_UART.UART_data[23];
 
     // 3回目の受信 6個
-    under_is_alive = static_cast<bool>(Bico_UART.UART_data[23]);
-    data_under_bmp_pressure_hPa = Bico_UART.UART_data[24];
-    data_under_bmp_temperature_deg = Bico_UART.UART_data[25];
-    data_under_bmp_altitude_m = Bico_UART.UART_data[26];
-    data_under_urm_altitude_m = Bico_UART.UART_data[27];
-    data_under_tsd20_altitude_m = Bico_UART.UART_data[28];
+    under_is_alive = static_cast<bool>(Bico_UART.UART_data[24]);
+    data_under_bmp_pressure_hPa = Bico_UART.UART_data[25];
+    data_under_bmp_temperature_deg = Bico_UART.UART_data[26];
+    data_under_bmp_altitude_m = Bico_UART.UART_data[27];
+    data_under_urm_altitude_m = Bico_UART.UART_data[28];
+    data_under_tsd20_altitude_m = Bico_UART.UART_data[29];
   }
 
   //最終受信時間から1秒以上経過している場合は死んでいるとみなす

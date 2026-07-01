@@ -43,6 +43,7 @@ volatile double data_air_gps_longitude_deg = 0.0;
 volatile double data_air_gps_altitude_m = 0.0;
 volatile double data_air_gps_groundspeed_ms = 0.0;
 volatile float data_air_gps_heading_deg = 0.0f;
+volatile uint8_t data_air_gps_satellites = 0;
 
 // SDP31
 volatile float data_air_sdp_differentialPressure_Pa = 0.0f;

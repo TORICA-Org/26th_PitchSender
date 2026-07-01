@@ -7,6 +7,7 @@
 ------------------------------------*/
 
 #pragma once  // インクルードガード（複数回読み込まれないようにする）
+#include <Arduino.h>
 
 // 離陸判定
 extern volatile bool takeoff;
@@ -42,6 +43,7 @@ extern volatile double data_air_gps_longitude_deg;
 extern volatile double data_air_gps_altitude_m;
 extern volatile double data_air_gps_groundspeed_ms;
 extern volatile float data_air_gps_heading_deg;
+extern volatile uint8_t data_air_gps_satellites;
 
 // SDP31
 extern volatile float data_air_sdp_differentialPressure_Pa;
@@ -107,7 +109,7 @@ struct LogData {
     bool urm_is_reliable;
     float filtered_airspeed_ms;
 
-    /* エアデータ 17個*/
+    /* エアデータ 18個*/
     float data_air_bmp_pressure_hPa;
     float data_air_bmp_temperature_deg;
     float data_air_bmp_altitude_m;
@@ -120,6 +122,7 @@ struct LogData {
     double data_air_gps_altitude_m;
     double data_air_gps_groundspeed_ms;
     float data_air_gps_heading_deg;
+    uint8_t data_air_gps_satellites;
     float data_air_sdp_differentialPressure_Pa;
     float data_air_sdp_airspeed_ms;
     float data_air_AoA_angle_deg;

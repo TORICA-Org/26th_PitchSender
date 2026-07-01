@@ -61,7 +61,7 @@ bool BMP3XX_init(void){
         #ifdef DEBUG_MODE
         Serial.println("Could not find a valid BMP3 sensor, check wiring!");
         #endif DEBUG_MODE
-        while(1);
+        // while(1);
         return false;
     }
     
