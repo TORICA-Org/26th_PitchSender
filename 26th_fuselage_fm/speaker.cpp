@@ -24,7 +24,6 @@ void speaker(float airspeed, float altitude, bool takeoff, bool isInsideArea, fl
     static int last_mode = -1;    // 前回のモードを記憶
     static bool spk_flag = false; // 音が出ているかのフラグ
     static uint32_t speaker_last_change_time = 0;
-    static uint32_t sound_duration = 100; // 音が出ている時間
 
     // 現在のモード
     // 0. platform(停止), 1: 禁止区域内（即座に警報を鳴らす），2: 接近中（警報），3: 通常飛行
@@ -32,7 +31,7 @@ void speaker(float airspeed, float altitude, bool takeoff, bool isInsideArea, fl
 
     // 離陸後のみ音を鳴らす
     if (takeoff == true){
-        if (isInsideArea == true) {
+        if (isInsideArea == false) {
             // 禁止区域内
             current_mode = 1;
         }

@@ -13,6 +13,10 @@
 // 離陸判定
 volatile bool takeoff = false;
 
+// SerialWeb用
+volatile bool RESET_SIG = false;
+volatile bool takeoff_decition = false;
+
 // 動作時間
 volatile uint32_t time_ms = 0;
 

@@ -5,3 +5,4 @@
 void initSDTask();
 void queueLogdata();
 void SD_Task(void *pvParameters);
+void detect_RESET_signal();

@@ -20,8 +20,9 @@ void run_speaker(void){
 
     speaker(data_air_sdp_airspeed_ms, trusted_altitude, takeoff, isInside, ttc);
 
-    Serial.print("isInside:  ");
-    Serial.println(isInside);
-    Serial.print("ttc:   ");
-    Serial.println(ttc);
+    // For Debug
+    // Serial.print("isInside:  ");
+    // Serial.println(isInside);
+    // Serial.print("ttc:   ");
+    // Serial.println(ttc);
 }

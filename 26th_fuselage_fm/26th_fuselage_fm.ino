@@ -16,6 +16,7 @@ LED2: UARTHelper_fslg.cppで使用
 #include "UARTHelper_fslg.h"
 #include "parameters.h"
 #include "speaker_wrapper.h"
+#include "BMP3xx.h"
 
 
 TaskHandle_t thp[2];  // マルチスレッドのタスクハンドル格納用
@@ -46,6 +47,7 @@ void setup() {
   // Core0タスク初期化処理
   pitchsender_init(); // pichsenderは6軸IMU(LSM)を使う．LSMの初期化はpitchsender_init()内で行われている．
   BNO055_init();// BNOは記録のみで，pitchsenderには使わない．
+  BMP3XX_init();
 
   // Core1タスク初期化処理
   initSDTask();  // SDカードの初期化
@@ -54,6 +56,8 @@ void setup() {
   xTaskCreatePinnedToCore(Core0_Task, "Core0_Task", 4096, NULL, 6, NULL, 0);
 
   xTaskCreatePinnedToCore(Core1_Task, "Core1_Task", 4096, NULL, 5, NULL, 1);
+
+  // SD_wrapper.cpp/.h内にあるSD_Task()もxTaskCreatePinnedToCore()で呼ばれる．
 
   Serial.println("Setup Done.");
 }
@@ -73,6 +77,7 @@ void Core0_Task(void *args){
 
     pitchsender_loop();
     read_BNO();
+    read_bmp_fslg();
 
     // BNOのキャリブレーション状態は1秒おきで取得．
     static uint32_t BNO_counter = 0;
@@ -83,16 +88,20 @@ void Core0_Task(void *args){
       BNO_counter++;
     }
 
-    // デバッグ用
+    // For debug
     takeoff = true;
     urm_is_reliable = true;
     data_under_urm_altitude_m = 0.6;
     data_air_sdp_airspeed_ms = 10.0;
 
+    // にいじゅく未来公園のど真ん中の座標
+    data_air_gps_latitude_deg = 35.461432;
+    data_air_gps_longitude_deg = 139.514524;
+
     run_speaker();
 
     // デバッグ用
-    // printTaskStats();
+    printTaskStats();
     // Serial.println(data_fslg_lsm_roll);
     // Serial.println("Core0 running");
 
@@ -108,7 +117,7 @@ void Core1_Task(void *args){
     receiveLog();
 
     queueLogdata();
-    
+
     static uint8_t transmit_counter = 0;
     transmitLog(transmit_counter);
     transmit_counter++;
@@ -116,6 +125,5 @@ void Core1_Task(void *args){
       transmit_counter = 0;
     }
 
-    // Serial.println("Core1 running");
   }
 }

@@ -1,8 +1,12 @@
+#include "freertos/idf_additions.h"
 #include "esp32-hal-gpio.h"
 #include "SD_wrapper.h"
 #include "parameters.h"
+#include "SD_fslg.h"
 
 QueueHandle_t sdQueue = NULL;  // SDタスク用のキュー
+
+extern TORICA_SD sd; // SD_fslg.h内のインスタンスsdを扱うため
 
 void initSDTask(){
     // 20件分収容できるキューを作成
@@ -10,7 +14,7 @@ void initSDTask(){
     initSD();  // SDカードの初期化
     flashHeader();  // ヘッダーファイルの書き込み
 
-    xTaskCreate(SD_Task, "SD_Task", 4096, NULL, 4, NULL);
+    xTaskCreatePinnedToCore(SD_Task, "SD_Task", 4096, NULL, 4, NULL, 1);
 }
 
 
@@ -95,7 +99,12 @@ void SD_Task(void *pvParameters){
 
             writeSD();
             
-            
         }
     }
+}
+
+void detect_RESET_signal(){
+    if (RESET_SIG == true){
+        
+    }   
 }

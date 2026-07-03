@@ -17,11 +17,11 @@
 //センサー初期化用
 bool BMP3XX_init(void);
 
-void read_bmp_air(void);
+// void read_bmp_air(void);
 
 // void read_bmp_under(void);
 
-// void read_bmp_fslg(void);
+void read_bmp_fslg(void);
 
 
 //float BMP3XX_getTemperature_deg(void);

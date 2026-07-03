@@ -57,7 +57,7 @@ Adafruit_BMP3XX bmp;
 // 胴体桁用
 
 bool BMP3XX_init(void){
-    if (!bmp.begin_I2C(0x77, &Wire)) {
+    if (!bmp.begin_I2C(0x76, &Wire)) {
         #ifdef DEBUG_MODE
         Serial.println("Could not find a valid BMP3 sensor, check wiring!");
         #endif DEBUG_MODE

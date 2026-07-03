@@ -2,6 +2,12 @@
 #pragma once
 #include <Arduino.h>
 
+// Bluetoothイヤホン設定
+inline constexpr const char* BT_audiodevice = "WF-C510";
+
+// 許容誤差（±TOLERANCE[deg]まで許容する）.
+inline constexpr float TOLERANCE = 0.2f;
+
 // 胴体桁基板ピン設定
 
 // UART
