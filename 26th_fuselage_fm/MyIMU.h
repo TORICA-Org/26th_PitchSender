@@ -7,3 +7,4 @@ extern volatile EulerAngles angles;
 
 void imu_init();
 void imu_refresh_euler();
+void imu_read_accel();

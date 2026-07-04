@@ -17,6 +17,8 @@ LED2: UARTHelper_fslg.cppで使用
 #include "parameters.h"
 #include "speaker_wrapper.h"
 #include "BMP3xx.h"
+#include "MyIMU.h"
+#include "calculate_altitude.h"
 
 
 TaskHandle_t thp[2];  // マルチスレッドのタスクハンドル格納用
@@ -76,8 +78,11 @@ void Core0_Task(void *args){
     vTaskDelayUntil(&xLastWakeTime, xFrequency);  // 10ms周期で実行する
 
     pitchsender_loop();
+
+
     read_BNO();
     read_bmp_fslg();
+    calculate_bmp_altitude();
 
     // BNOのキャリブレーション状態は1秒おきで取得．
     static uint32_t BNO_counter = 0;
@@ -89,10 +94,10 @@ void Core0_Task(void *args){
     }
 
     // For debug
-    takeoff = true;
-    urm_is_reliable = true;
-    data_under_urm_altitude_m = 0.6;
-    data_air_sdp_airspeed_ms = 10.0;
+    // takeoff = true;
+    // urm_is_reliable = true;
+    // data_under_urm_altitude_m = 0.6;
+    // data_air_sdp_airspeed_ms = 10.0;
 
     // にいじゅく未来公園のど真ん中の座標
     data_air_gps_latitude_deg = 35.461432;
@@ -101,7 +106,7 @@ void Core0_Task(void *args){
     run_speaker();
 
     // デバッグ用
-    printTaskStats();
+    // printTaskStats();
     // Serial.println(data_fslg_lsm_roll);
     // Serial.println("Core0 running");
 
@@ -117,6 +122,8 @@ void Core1_Task(void *args){
     receiveLog();
 
     queueLogdata();
+
+    detect_RESET_signal();
 
     static uint8_t transmit_counter = 0;
     transmitLog(transmit_counter);

@@ -69,9 +69,10 @@ void receiveLog() {
   // エアデータから受信
   static unsigned long int last_bico_time_ms = 0;
 
-  // バッファ中の文字列に"RESET"という文字列が含まれている場合
+  
   if (Bico_UART.listenUART()) {
     if (strstr(Bico_UART.buff, "RESET") != 0) {
+      // バッファ中の文字列に"RESET"という文字列が含まれている場合
       // CSVに"RESET"を追加
       RESET_SIG = true;
 
@@ -79,7 +80,9 @@ void receiveLog() {
       // 文字列"CALIB"が含まれている場合
     } else {
 
-      int readnum_bico = Bico_UART.readUART();
+      int readnum_bico = Bico_UART.parseBuffer(Bico_UART.buff);
+      Serial.println(readnum_bico);
+
       const int bico_data_num = 30;  //正常な場合のデータ受信数
 
       if (readnum_bico == bico_data_num) {

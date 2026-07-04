@@ -60,9 +60,9 @@ void loop() {
 
     if (!isInside) {
       // すでにエリア外に出ている場合
-      Serial.println(">>> [STATUS] DANGER: 飛行禁止区域！！！");
+      Serial.println("!! Restricted Area !!");
     } else {
-      Serial.println(">>> [STATUS] SAFE: 飛行可能区域内");
+      Serial.println("!! Not in restricted area !!");
 
       // --------------------------------------------------------
       // 禁止区域外ならば
@@ -76,15 +76,18 @@ void loop() {
 
       // TTCの結果に応じた処理
       if (ttc < 0) {
-        Serial.println(">>> [PREDICTION] 境界線から遠ざかっている、または平行に飛行中。");
+        // 境界線から遠ざかっているor平行に移動中
+        // Serial.println(">>> 境界線から遠ざかっている，または平行に飛行中。");
+
       } else {
-        Serial.print(">>> [PREDICTION] 境界線への最短到達予想時間 (TTC): ");
+        // 
+        Serial.print("TTC: ");
         Serial.print(ttc, 2);
         Serial.println(" 秒");
 
         // 警告判定
         if (ttc <= TTC_WARNING_SEC) {
-          Serial.println("    !!! ALERT: まもなく境界線に到達します !!!");
+          Serial.println("    !!! ALERT  !!!");
           // ここにブザーを鳴らす処理などを追加
         }
       }

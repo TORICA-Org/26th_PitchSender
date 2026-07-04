@@ -10,13 +10,14 @@ enum {
 void pitchsender_init() {
   // IMU初期化とBluetoothデバイス初期化
   imu_init();
-  // bt_init("WF-C510");
+  bt_init("WF-C510");
   // bt_init("Echo Buds 00UG");
 }
 
 
 void pitchsender_loop() {
   imu_refresh_euler();
+  imu_read_accel();
 
   String status;
 

@@ -3,8 +3,8 @@
 // 胴体桁基板ピン設定
 
 // UART
-const int SerialTX = 33; // GPIO32
-const int SerialRX = 32; // GPIO33
+const int SerialTX = 33; // GPIO33
+const int SerialRX = 32; // GPIO32
 
 // I2Cピン
 const int I2C_SDA = 21; // GPIO21

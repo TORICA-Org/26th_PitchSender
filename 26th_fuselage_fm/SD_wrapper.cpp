@@ -105,6 +105,7 @@ void SD_Task(void *pvParameters){
 
 void detect_RESET_signal(){
     if (RESET_SIG == true){
-        
+        sd.add_str("\nRESET\n");
+        RESET_SIG = false;
     }   
 }
