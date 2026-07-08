@@ -30,22 +30,22 @@ bool BNO055_init(void){
 void read_BNO(void){
   // オイラー角（roll,pitch,yaw）の取得
   imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-  data_psd_bno_yaw = euler.x();   // yaw角
-  data_psd_bno_roll = euler.y();  // roll角
-  data_psd_bno_pitch = euler.z(); // pitch角
+  data_fslg_bno_yaw = euler.x();   // yaw角
+  data_fslg_bno_roll = euler.y();  // roll角
+  data_fslg_bno_pitch = euler.z(); // pitch角
   
   // クォータニオンを取得
   imu::Quaternion quat = bno.getQuat(); 
-  data_psd_bno_qw = quat.w(); 
-  data_psd_bno_qx = quat.x(); 
-  data_psd_bno_qy = quat.y(); 
-  data_psd_bno_qz = quat.z(); 
+  data_fslg_bno_qw = quat.w(); 
+  data_fslg_bno_qx = quat.x(); 
+  data_fslg_bno_qy = quat.y(); 
+  data_fslg_bno_qz = quat.z(); 
 
   // 加速度の取得
   imu::Vector<3> accel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-  data_psd_bno_accx_mss = accel.x(); // x方向の加速度
-  data_psd_bno_accy_mss = accel.y(); // y方向の加速度
-  data_psd_bno_accz_mss = accel.z(); // z方向の加速度
+  data_fslg_bno_accx_mss = accel.x(); // x方向の加速度
+  data_fslg_bno_accy_mss = accel.y(); // y方向の加速度
+  data_fslg_bno_accz_mss = accel.z(); // z方向の加速度
   
 }
 
@@ -59,5 +59,5 @@ void read_BNO(void){
 
 // キャリブレーション状態取得
 void read_BNO_cal(){
-  bno.getCalibration(&data_psd_bno_cal_system, &data_psd_bno_cal_gyro, &data_psd_bno_cal_accel, &data_psd_bno_cal_mag); //system, gyro, accel, magの順番
+  bno.getCalibration(&data_fslg_bno_cal_system, &data_fslg_bno_cal_gyro, &data_fslg_bno_cal_accel, &data_fslg_bno_cal_mag); //system, gyro, accel, magの順番
 }

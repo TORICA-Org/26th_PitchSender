@@ -1,0 +1,58 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="H0YPRP8WU7xcA-L2BAK0">
+    <mxGraphModel dx="595" dy="432" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-1" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="230" y="270" as="sourcePoint" />
+            <mxPoint x="390" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="$$\mathrm{B_{k}}$$" vertex="1">
+          <mxGeometry height="30" width="60" x="365" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="$$\mathrm{B_{k-1}}$$" vertex="1">
+          <mxGeometry height="30" width="60" x="200" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-4" edge="1" parent="1" source="jKXPVmUFjm1ive4WsxEH-6" style="endArrow=none;startArrow=classic;html=1;rounded=0;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="150" y="210" as="sourcePoint" />
+            <mxPoint x="230" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-7" edge="1" parent="1" style="endArrow=none;startArrow=classic;html=1;rounded=0;endFill=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="180" y="200" as="sourcePoint" />
+            <mxPoint x="230" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-8" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="40" width="40" x="290" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-6" parent="jKXPVmUFjm1ive4WsxEH-8" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
+          <mxGeometry height="10" width="10" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="$$\overrightarrow{\mathrm{B_{k-1}B_k}}$$" vertex="1">
+          <mxGeometry height="30" width="60" x="302.36" y="213.36" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-11" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="$$\overrightarrow{\mathrm{B_{k-1}P}}$$" vertex="1">
+          <mxGeometry height="30" width="60" x="220" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="$$\overrightarrow{\mathrm{B_{k-1}B_k}} \times \overrightarrow{\mathrm{B_{k-1}P}}$$" vertex="1">
+          <mxGeometry height="30" width="60" x="120" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-13" parent="1" style="shape=mxgraph.basic.arc;html=1;startAngle=0.6349908807711901;endAngle=0.8824939045369897;endArrow=classic;endFill=1;rotation=-45;flipH=1;legacyAnchorPoints=0;" value="" vertex="1">
+          <mxGeometry height="59.36" width="50" x="245.22" y="192.54" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="$$\theta$$" vertex="1">
+          <mxGeometry height="30" width="60" x="265" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="jKXPVmUFjm1ive4WsxEH-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="$$\mathrm{P}$$" vertex="1">
+          <mxGeometry height="40" width="40" x="275" y="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
