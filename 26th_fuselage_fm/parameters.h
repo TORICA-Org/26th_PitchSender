@@ -16,7 +16,7 @@ extern volatile uint32_t time_ms;
 
 // SerialWeb用
 extern volatile bool RESET_SIG;
-extern volatile bool takeoff_decition;
+extern volatile bool SPK_ENABLE;
 
 /*--- 高度計算用 ---*/
 // 気圧高度・超音波高度フィルタリング用

@@ -15,7 +15,7 @@ volatile bool takeoff = false;
 
 // SerialWeb用
 volatile bool RESET_SIG = false;
-volatile bool takeoff_decition = false;
+volatile bool SPK_ENABLE = false;
 
 // 動作時間
 volatile uint32_t time_ms = 0;
