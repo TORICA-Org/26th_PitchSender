@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "speaker.h"
 #include "check_restricted_zone.h"
 #include "parameters.h"
@@ -29,8 +30,9 @@ void speaker(float airspeed, float altitude, bool takeoff, bool isInsideArea, fl
     // 0. platform(停止), 1: 禁止区域内（即座に警報を鳴らす），2: 接近中（警報），3: 通常飛行
     int current_mode = 0;
 
-    // 離陸後のみ音を鳴らす
-    if (takeoff == true){
+    // current_modeを決定
+    // 離陸後のみ or 強制的にスピーカーONになったら音を鳴らす
+    if (takeoff == true || SPK_ENABLE == true){
         if (isInsideArea == false) {
             // 禁止区域内
             current_mode = 1;
@@ -112,4 +114,5 @@ void speaker(float airspeed, float altitude, bool takeoff, bool isInsideArea, fl
             spk_flag = false;
         }
     }
+
 }

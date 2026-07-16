@@ -107,7 +107,7 @@ void Core0_Task(void *args){
 
     // デバッグ用
     // printTaskStats();
-    // Serial.println(data_fslg_lsm_roll);
+    Serial.println(data_fslg_lsm_pitch);
     // Serial.println("Core0 running");
 
   }

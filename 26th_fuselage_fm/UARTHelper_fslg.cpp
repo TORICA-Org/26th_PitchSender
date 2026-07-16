@@ -76,8 +76,21 @@ void receiveLog() {
       // CSVに"RESET"を追加
       RESET_SIG = true;
 
-    } else if (strstr(Bico_UART.buff, "CALIB") != NULL) {
-      // 文字列"CALIB"が含まれている場合
+    } else if (strstr(Bico_UART.buff, "SPK_EN") != 0) {
+      // 文字列"SPK_EN"が含まれている場合
+      SPK_ENABLE = true;
+    } else if (strstr(Bico_UART.buff, "SPK_DIS") != 0){
+      // 文字列"SPK_DIS"が含まれている場合
+      SPK_DISABLE = true;
+      if (SPK_DISABLE == true){
+        SPK_ENABLE = false;
+        SPK_DISABLE = false;
+      }
+
+    } else if (strstr(Bico_UART.buff, "CHG_TO") != 0) {
+      // 文字列CHG_TOが含まれている場合（Change Takeoff flag）
+      takeoff = !takeoff;
+      
     } else {
 
       int readnum_bico = Bico_UART.parseBuffer(Bico_UART.buff);

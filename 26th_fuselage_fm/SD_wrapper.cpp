@@ -107,5 +107,9 @@ void detect_RESET_signal(){
     if (RESET_SIG == true){
         sd.add_str("\nRESET\n");
         RESET_SIG = false;
-    }   
+    } else if (SPK_DISABLE == true) {
+        // スピーカーOFFにする．そしてSPK_DISABLEフラグもおろす．
+        SPK_ENABLE = false;
+        SPK_DISABLE = false;
+    }
 }

@@ -197,7 +197,7 @@ void to_euler_angles() {
 
   float sinp = 2.0f * (qua.w * qua.y - qua.z * qua.x);
   sinp = min(max(sinp, -1.0f), 1.0f);
-  angles.pitch = asin(sinp) * 180.0f / PI;
+  angles.pitch = -asin(sinp) * 180.0f / PI;
 
   data_fslg_lsm_pitch = angles.pitch;
 
@@ -298,6 +298,11 @@ void imu_refresh_euler() {
     qua.y = qy;
     qua.z = qz;
 
+    qua.w = qw;
+    qua.x = qy;
+    qua.y = -qx;
+    qua.z = qz;
+
     normalize();
     to_euler_angles();
   }
@@ -329,10 +334,19 @@ void imu_read_accel(){
 
   // デフォルト設定（フルスケール ±2g）での物理値換算
   // LSM6DSV16Xの±2gモード時の感度は 0.061 mg/LSB
-  accel.x = raw_x * 0.000061f;
+  // accel.x = raw_x * 0.000061f;
+  // data_fslg_lsm_accx_mss = accel.x;
+  
+  // accel.y = raw_y * 0.000061f;
+  // data_fslg_lsm_accy_mss = accel.y;
+
+  // accel.z = raw_z * 0.000061f;
+  // data_fslg_lsm_accz_mss = accel.z;
+
+  accel.x = raw_y * 0.000061f;
   data_fslg_lsm_accx_mss = accel.x;
   
-  accel.y = raw_y * 0.000061f;
+  accel.y = raw_x * 0.000061f;
   data_fslg_lsm_accy_mss = accel.y;
 
   accel.z = raw_z * 0.000061f;
