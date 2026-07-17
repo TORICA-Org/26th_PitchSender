@@ -18,6 +18,8 @@ extern volatile uint32_t time_ms;
 extern volatile bool RESET_SIG;
 extern volatile bool SPK_ENABLE;
 extern volatile bool SPK_DISABLE;
+extern volatile bool CALIB;
+extern volatile bool CALIB_SIG;
 
 /*--- 高度計算用 ---*/
 // 気圧高度・超音波高度フィルタリング用

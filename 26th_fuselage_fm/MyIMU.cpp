@@ -69,6 +69,10 @@ volatile Quaternion qua;
 
 volatile EulerAngles angles;
 
+static float roll_offset = 0.0f;
+static float pitch_offset = 0.0f;
+static float yaw_offset = 0.0f;
+
 struct AccelData {
   float x, y, z;
 };
@@ -191,21 +195,37 @@ void normalize() {  // クオータニオンを正規化.
 void to_euler_angles() {
   float sinr_cosp = 2.0f * (qua.w * qua.x + qua.y * qua.z);
   float cosr_cosp = 1.0f - 2.0f * (qua.x * qua.x + qua.y * qua.y);
-  angles.roll = atan2(sinr_cosp, cosr_cosp) * 180.0f / PI;
+  float raw_roll = atan2(sinr_cosp, cosr_cosp) * 180.0f / PI;
 
-  data_fslg_lsm_roll = angles.roll;
+  data_fslg_lsm_roll = raw_roll;
 
   float sinp = 2.0f * (qua.w * qua.y - qua.z * qua.x);
   sinp = min(max(sinp, -1.0f), 1.0f);
-  angles.pitch = -asin(sinp) * 180.0f / PI;
+  float raw_pitch = -asin(sinp) * 180.0f / PI;
 
-  data_fslg_lsm_pitch = angles.pitch;
+  data_fslg_lsm_pitch = raw_pitch;
 
   float siny_cosp = 2.0f * (qua.w * qua.z + qua.x * qua.y);
   float cosy_cosp = 1.0f - 2.0f * (qua.y * qua.y + qua.z * qua.z);
-  angles.yaw = atan2(siny_cosp, cosy_cosp) * 180.0f / PI;
+  float raw_yaw = atan2(siny_cosp, cosy_cosp) * 180.0f / PI;
 
-  data_fslg_lsm_yaw = angles.yaw;
+  data_fslg_lsm_yaw = raw_yaw;
+
+  // Calibrationコマンドを受信したとき，その瞬間の姿勢角を取得し，オフセットとする．
+  if (CALIB == true) {
+    roll_offset = raw_roll;
+    pitch_offset = raw_pitch;
+    yaw_offset = raw_yaw;
+
+    // CALIBフラグを下ろす
+    CALIB = false;
+    // SDカード書き込み用フラグを上げる
+    CALIB_SIG = true;
+  }
+
+  angles.roll = raw_roll - roll_offset;
+  angles.pitch = raw_pitch - pitch_offset;
+  angles.yaw = raw_yaw - yaw_offset;
 }
 
 
