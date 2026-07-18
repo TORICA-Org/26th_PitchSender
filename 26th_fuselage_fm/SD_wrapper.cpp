@@ -93,6 +93,18 @@ void SD_Task(void *pvParameters){
     while(1){
         if (xQueueReceive(sdQueue, &receivedData, portMAX_DELAY) == pdPASS) {
 
+            // RESET信号受信時，csvに'\nRESET\n'を書き込む
+            if (RESET_SIG == true) {
+                sd.add_str("\nRESET\n");
+                RESET_SIG = false;
+            }
+
+            // CALIB信号受信時，csvに'\nCALIB\n'を書き込む（SDにはオフセットを含んだ姿勢角は書き込まれない．キャリブレーションを行ったという記録のみ残し，基本は生データが書き込まれる．）
+            if (CALIB_SIG == true) {
+                sd.add_str("\nCALIB\n");
+                CALIB_SIG = false;
+            }
+
             for (int mode = 0; mode < 4; mode++){
                 addDataToSDBuf(receivedData, mode);
             }
@@ -104,8 +116,9 @@ void SD_Task(void *pvParameters){
 }
 
 void detect_RESET_signal(){
-    if (RESET_SIG == true){
-        sd.add_str("\nRESET\n");
-        RESET_SIG = false;
-    }   
+    if (SPK_DISABLE == true) {
+        // スピーカーOFFにする．そしてSPK_DISABLEフラグもおろす．
+        SPK_ENABLE = false;
+        SPK_DISABLE = false;
+    }
 }

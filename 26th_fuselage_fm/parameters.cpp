@@ -16,6 +16,9 @@ volatile bool takeoff = false;
 // SerialWeb用
 volatile bool RESET_SIG = false;
 volatile bool SPK_ENABLE = false;
+volatile bool SPK_DISABLE = false;
+volatile bool CALIB = false;
+volatile bool CALIB_SIG = false;
 
 // 動作時間
 volatile uint32_t time_ms = 0;
