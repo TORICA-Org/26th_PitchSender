@@ -225,7 +225,7 @@ flowchart TD
         BNO_Loop["read_BNO()<br>オイラー角・クォータニオン・加速度取得"]
         BMP_Loop["read_bmp_fslg() -> calculate_bmp_altitude()<br>気圧温度取得＆標準大気高度計算"]
         BNO_Cal_Check{"BNO_counter > 100 ?<br>(約1秒おき)"}
-        BNO_Cal["read_BNO_cal()<br>sys, gyro, accel, mag キャリブステータス更新"]
+        BNO_Cal["read_BNO_cal() / BNO_Calib()<br>sys, gyro, accel, mag キャリブステータス更新"]
         GPS_Override["GPS座標更新<br>(にいじゅく未来公園デバッグ座標)"]
         Spk_Loop["run_speaker() -> speaker()<br>進入禁止区域判定 & TTC 計算により警報音出力"]
 

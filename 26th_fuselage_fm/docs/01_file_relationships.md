@@ -11,22 +11,22 @@
 
 | ファイル名 | 分類 | 主な役割・責務 |
 | :--- | :--- | :--- |
-| **`26th_fuselage_fm.ino`** | メインエントリ | FreeRTOS タスク初期化 (`Core0_Task`, `Core1_Task`, `SD_Task`) と起動処理 (`setup()`) を担当するメインファイル。`loop()` は空。 |
-| **`parameters.h / .cpp`** | グローバル変数・構造体 | センサー生データ・計算値・状態フラグを保持する `volatile` グローバル変数 (全54項目以上) と、SD記録用構造体 `struct LogData` の宣言と定義。 |
-| **`fslg_config.h / .cpp`** | ピン割り当て・定数 | ESP32 Devkit 32E 胴体桁基板における UART (`SerialRX`/`TX`)、I2C (`SDA`/`SCL`)、SPI (`SD_...`)、スピーカー (`SPK`)、インジケータ LED のピン番号設定。 |
-| **`pitchsender_wrapper.h / .cpp`** | ピッチ音声フィードバックラッパー | LSM6DSV16X 6軸 IMU を用いた姿勢判定 (`TAIL_UP`, `LEVEL`, `TAIL_DOWN`) と、Bluetooth A2DP 経由のピッチ音 (`bt_set_sound`) の生成・更新ループを担当。 |
-| **`MyIMU.h / .cpp`** | 6軸 IMU ドライバ | LSM6DSV16X (I2C) の初期化 (`lsm6_init`)、FIFOからのクォータニオン・オイラー角計算 (`imu_refresh_euler`)、加速度取得 (`imu_read_accel`) を担当。 |
-| **`MyBluetooth.h / .cpp`** | Bluetooth A2DP オーディオ | `BluetoothA2DPSource` を用いたイヤホン (`WF-C510` 等) 接続と、割り込み・フレームコールバック (`get_data_frames`) によるエンベロープ／正弦波音声合成。 |
-| **`Frequency.h / .cpp`** | 周波数変換 | 音階文字列 (`"C5"`, `"G5"` など) を周波数 (Hz) の浮動小数点数に変換するヘルパーモジュール。 |
-| **`BNO055.h / .cpp`** | 9軸 IMU ドライバ | Adafruit BNO055 (I2C 0x28) の初期化・生加速度・クォータニオン・オイラー角の取得 (`read_BNO`) およびキャリブレーション値の取得 (`read_BNO_cal`)。 |
-| **`BMP3xx.h / .cpp`** | 気圧センサドライバ | Adafruit BMP3XX (I2C 0x76) の初期化 (`BMP3XX_init`) と気圧・温度読み出し (`read_bmp_fslg`)。 |
-| **`calculate_altitude.h / .cpp`** | 高度計算ロジック | BMP390 から取得した気圧・温度に基づく標準大気式を用いた気圧高度計算 (`calculate_bmp_altitude`)。 |
-| **`check_restricted_zone.h / .cpp`** | 進入禁止区域ジオメトリ | TinyGPSPlus を用いたポリゴン領域内外判定 (`isInsideArea`) および 境界線到達最短予想時間 TTC 計算 (`calc_time_to_reach`)。 |
-| **`speaker_wrapper.h / .cpp`** | スピーカー警報ラッパー | `check_restricted_zone` の TTC やエリア内外情報と高度・機速を取得し、`speaker()` 関数へ渡す中間統合モジュール (`run_speaker`)。 |
-| **`speaker.h / .cpp`** | 警報スピーカー制御 | 飛行状態 (`current_mode`: 禁止区域／接近／通常) と速度・高度に応じた周波数／断続音を圧電スピーカー (`SPK`) に出力するドライバ (`speaker`)。 |
-| **`SD_wrapper.h / .cpp`** | SD キュー＆タスク管理 | `sdQueue` の作成、SD 初期化タスク設定 (`initSDTask`)、ロギングデータ投入 (`queueLogdata`)、および非同期 SD 書き込みタスク (`SD_Task`) の実装。 |
-| **`SD_fslg.h / .cpp`** | SD カードドライバ | `TORICA_SD` クラスを用いた CSV ヘッダー書込 (`flashHeader`) および SRAM 節約のための 4モード分割フォーマット SD 書込処理 (`addDataToSDBuf`, `writeSD`)。 |
-| **`UARTHelper_fslg.h / .cpp`** | Bico UART 通信管理 | Bico 基板 (`Serial1`: 460800 bps, 8E1) との `TORICA_UART` 送受信 (`receiveLog`, `transmitLog`) およびコマンド文字列 (`RESET`, `SPK_EN` 等) の解析処理。 |
+| **[`26th_fuselage_fm.ino`](../26th_fuselage_fm.ino)** | メインエントリ | FreeRTOS タスク初期化 (`Core0_Task`, `Core1_Task`, `SD_Task`) と起動処理 (`setup()`) を担当するメインファイル。`loop()` は空。 |
+| **[`parameters.h`](../parameters.h)** / **[`parameters.cpp`](../parameters.cpp)** | グローバル変数・構造体 | センサー生データ・計算値・状態フラグを保持する `volatile` グローバル変数 (全54項目以上) と、SD記録用構造体 `struct LogData` の宣言と定義。 |
+| **[`fslg_config.h`](../fslg_config.h)** / **[`fslg_config.cpp`](../fslg_config.cpp)** | ピン割り当て・定数 | ESP32 Devkit 32E 胴体桁基板における UART (`SerialRX`/`TX`)、I2C (`SDA`/`SCL`)、SPI (`SD_...`)、スピーカー (`SPK`)、インジケータ LED のピン番号設定。 |
+| **[`pitchsender_wrapper.h`](../pitchsender_wrapper.h)** / **[`pitchsender_wrapper.cpp`](../pitchsender_wrapper.cpp)** | ピッチ音声フィードバックラッパー | LSM6DSV16X 6軸 IMU を用いた姿勢判定 (`TAIL_UP`, `LEVEL`, `TAIL_DOWN`) と、Bluetooth A2DP 経由のピッチ音 (`bt_set_sound`) の生成・更新ループを担当。 |
+| **[`MyIMU.h`](../MyIMU.h)** / **[`MyIMU.cpp`](../MyIMU.cpp)** | 6軸 IMU ドライバ | LSM6DSV16X (I2C) の初期化 (`lsm6_init`)、FIFOからのクォータニオン・オイラー角計算 (`imu_refresh_euler`)、加速度取得 (`imu_read_accel`) を担当。 |
+| **[`MyBluetooth.h`](../MyBluetooth.h)** / **[`MyBluetooth.cpp`](../MyBluetooth.cpp)** | Bluetooth A2DP オーディオ | `BluetoothA2DPSource` を用いたイヤホン (`WF-C510` 等) 接続と、割り込み・フレームコールバック (`get_data_frames`) によるエンベロープ／正弦波音声合成。 |
+| **[`Frequency.h`](../Frequency.h)** / **[`Frequency.cpp`](../Frequency.cpp)** | 周波数変換 | 音階文字列 (`"C5"`, `"G5"` など) を周波数 (Hz) の浮動小数点数に変換するヘルパーモジュール。 |
+| **[`BNO055.h`](../BNO055.h)** / **[`BNO055.cpp`](../BNO055.cpp)** | 9軸 IMU ドライバ | Adafruit BNO055 (I2C 0x28) の初期化・生加速度・クォータニオン・オイラー角の取得 (`read_BNO`) およびキャリブレーション値の取得 (`read_BNO_cal`)。 |
+| **[`BMP3xx.h`](../BMP3xx.h)** / **[`BMP3xx.cpp`](../BMP3xx.cpp)** | 気圧センサドライバ | Adafruit BMP3XX (I2C 0x76) の初期化 (`BMP3XX_init`) と気圧・温度読み出し (`read_bmp_fslg`)。 |
+| **[`calculate_altitude.h`](../calculate_altitude.h)** / **[`calculate_altitude.cpp`](../calculate_altitude.cpp)** | 高度計算ロジック | BMP390 から取得した気圧・温度に基づく標準大気式を用いた気圧高度計算 (`calculate_bmp_altitude`)。 |
+| **[`check_restricted_zone.h`](../check_restricted_zone.h)** / **[`check_restricted_zone.cpp`](../check_restricted_zone.cpp)** | 進入禁止区域ジオメトリ | TinyGPSPlus を用いたポリゴン領域内外判定 (`isInsideArea`) および 境界線到達最短予想時間 TTC 計算 (`calc_time_to_reach`)。 |
+| **[`speaker_wrapper.h`](../speaker_wrapper.h)** / **[`speaker_wrapper.cpp`](../speaker_wrapper.cpp)** | スピーカー警報ラッパー | `check_restricted_zone` の TTC やエリア内外情報と高度・機速を取得し、`speaker()` 関数へ渡す中間統合モジュール (`run_speaker`)。 |
+| **[`speaker.h`](../speaker.h)** / **[`speaker.cpp`](../speaker.cpp)** | 警報スピーカー制御 | 飛行状態 (`current_mode`: 禁止区域／接近／通常) と速度・高度に応じた周波数／断続音を圧電スピーカー (`SPK`) に出力するドライバ (`speaker`)。 |
+| **[`SD_wrapper.h`](../SD_wrapper.h)** / **[`SD_wrapper.cpp`](../SD_wrapper.cpp)** | SD キュー＆タスク管理 | `sdQueue` の作成、SD 初期化タスク設定 (`initSDTask`)、ロギングデータ投入 (`queueLogdata`)、および非同期 SD 書き込みタスク (`SD_Task`) の実装。 |
+| **[`SD_fslg.h`](../SD_fslg.h)** / **[`SD_fslg.cpp`](../SD_fslg.cpp)** | SD カードドライバ | `TORICA_SD` クラスを用いた CSV ヘッダー書込 (`flashHeader`) および SRAM 節約のための 4モード分割フォーマット SD 書込処理 (`addDataToSDBuf`, `writeSD`)。 |
+| **[`UARTHelper_fslg.h`](../UARTHelper_fslg.h)** / **[`UARTHelper_fslg.cpp`](../UARTHelper_fslg.cpp)** | Bico UART 通信管理 | Bico 基板 (`Serial1`: 460800 bps, 8E1) との `TORICA_UART` 送受信 (`receiveLog`, `transmitLog`) およびコマンド文字列 (`RESET`, `SPK_EN` 等) の解析処理。 |
 
 ---
 
@@ -173,3 +173,21 @@ struct LogData {
    Core 1 上で低優先度 (Priority 4) で動作する `SD_Task` は、キューから `LogData receivedData;` として値を取り出します (`xQueueReceive`)。これにより、どれだけ SD カードの書き込みや SPI バスがバッファで遅延しても、**そのスナップショット (ログ 1フレーム) は完全に分離・固定されており、他のコアが進行してグローバル変数を書き換えても一切影響をうけません。**
 
 この「**リアルタイム制御用 `volatile` 共有変数**」＋「**ロギング用 `LogData` スナップショット・キュー通信**」の設計により、高いリアルタイム性・スレッドセーフティ・完全なログ整合性を同時に両立しています。
+
+---
+
+## 4. FreeRTOS および ハードウェア API (ペリフェラル) の抽象化設計
+
+本システムでは、ESP32 特有のハードウェア API や FreeRTOS の OS プリミティブを各モジュールへ適切にカプセル化し、上位層が物理層を意識せずにロジックに集中できる設計となっています。
+
+### 4.1 ハードウェア API のカプセル化
+各デバイスとの物理的な通信は、専用のラッパークラスや関数で隠蔽されています。
+* **`Wire` (I2C 400kHz)**: `MyIMU.cpp` (LSM6DSV16X), `BNO055.cpp`, `BMP3xx.cpp` 内部で `Wire.beginTransmission()` などの I2C ハードウェア API が呼ばれ、上位層 (`pitchsender_wrapper` など) は「初期化」と「データ取得」の関数を呼ぶだけで済みます。
+* **`Serial1` (UART 460800bps)**: Bico との高速通信は `UARTHelper_fslg.cpp` 内で `Serial_Bico` として抽象化されています。`setRxBufferSize` や `flush` といった UART 特有の制御はここに閉じ込められています。
+* **`SPI` (SD カード)**: `SD_fslg.cpp` 内部の `TORICA_SD` クラスが `SPI` のチップセレクト (`SD_CS`) やハードウェア SPI ピン (`SCK`, `MISO`, `MOSI`) を管理します。
+* **`BluetoothA2DPSource` / `tone()`**: `MyBluetooth.cpp` では ESP32 の A2DP ハードウェアエンコーダを利用し、`speaker.cpp` では `tone()` 関数によるハードウェアタイマー PWM 出力を利用していますが、上位層からは「指定した周波数で音を鳴らす」という抽象的な関数 (`bt_set_sound`, `speaker`) しか見えません。
+
+### 4.2 FreeRTOS タスクと同期・通信の統合
+* **タスクの並行性**: `26th_fuselage_fm.ino` の `setup()` で `xTaskCreatePinnedToCore` が呼ばれ、各ペリフェラルドライバを束ねた `Core0_Task` (センサー・オーディオ) と `Core1_Task` (通信・ストレージ) が完全に分離されたコアで並列動作します。
+* **正確な周期実行**: `Core0_Task` 内の `vTaskDelayUntil` を用いることで、センサーの積分計算に必要な「厳密な 10ms (100Hz) 周期」がハードウェアタイマーレベルで保証されます。
+* **安全なデータ転送**: `Core1_Task` と `SD_Task` 間の通信には `xQueueSend` / `xQueueReceive` によるプロセス間通信が用いられ、SD カードの SPI 書き込みブロックがシリアル受信タスクを停止させることのない、完全に非同期なパイプラインを形成しています。

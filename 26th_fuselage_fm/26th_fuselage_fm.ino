@@ -49,6 +49,7 @@ void setup() {
   // Core0タスク初期化処理
   pitchsender_init(); // pichsenderは6軸IMU(LSM)を使う．LSMの初期化はpitchsender_init()内で行われている．
   BNO055_init();// BNOは記録のみで，pitchsenderには使わない．
+  BNO_Calib_init();
   BMP3XX_init();
 
   // Core1タスク初期化処理
@@ -81,6 +82,7 @@ void Core0_Task(void *args){
 
 
     read_BNO();
+
     read_bmp_fslg();
     calculate_bmp_altitude();
 
@@ -89,6 +91,8 @@ void Core0_Task(void *args){
     if (BNO_counter > 100){
       BNO_counter = 0;
       read_BNO_cal();
+      BNO_Calib(data_fslg_bno_cal_system, data_fslg_bno_cal_gyro, data_fslg_bno_cal_accel, data_fslg_bno_cal_mag);
+
     } else {
       BNO_counter++;
     }
@@ -107,7 +111,7 @@ void Core0_Task(void *args){
 
     // デバッグ用
     // printTaskStats();
-    Serial.println(data_fslg_lsm_pitch);
+    // Serial.println(data_fslg_lsm_pitch);
     // Serial.println("Core0 running");
 
   }

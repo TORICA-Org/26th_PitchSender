@@ -3,6 +3,8 @@
 #include "check_restricted_zone.h"
 #include "parameters.h"
 
+// #define SPEAKER_ALT_ENABLE // やっぱり高度読み上げONにしたくなったらコメントアウト外す
+
 const float airspeed_factor  = 1.0; // 対気速度の補正係数．
 // airspeed_adj = airspeed * airspeed_factor
 
@@ -73,16 +75,20 @@ void speaker(float airspeed, float altitude, bool takeoff, bool isInsideArea, fl
 
         // まずは音の高さを決定
         float airspeed_adj = airspeed * airspeed_factor; // 補正済みスピードを計算
-        // 補正済み速度が10.8m/s以上のとき
-        if (airspeed_adj >= 10.8){
+        // 補正済み速度が11.0m/s以上のとき
+        if (airspeed_adj >= 11.0){
             sound_freq = 1320;
-        } else if (airspeed_adj >= 9.5){
+            // 9.0m以上11.0m未満
+        } else if (airspeed_adj >= 9.0){
             sound_freq = 880;
         }
-        // 9.5m/s未満は初期値の440Hzのまま
+        // 9.0m/s未満は初期値の440Hzのまま
 
         // 高度から音の間隔を決定
-        uint32_t interval = 100;
+        uint32_t interval = 900;
+
+// 高度読み上げONのとき
+#ifdef SPEAKER_ALT_ENABLE
         float altitude_max = 1.0;
         float altitude_min = 0.0;
 
@@ -90,8 +96,11 @@ void speaker(float airspeed, float altitude, bool takeoff, bool isInsideArea, fl
             interval = 900;
         } else if (altitude >= 0.0){
             interval = float_map(altitude, altitude_min, altitude_max, 125, 700);
+        } else {
+            // 高度がマイナスの場合
+            interval = 100;
         }
-        // 高度がマイナスの場合は初期値100のまま
+#endif
 
         uint32_t current_time = millis();
         uint32_t sound_duration = 300; // 音が出ている時間
@@ -108,7 +117,7 @@ void speaker(float airspeed, float altitude, bool takeoff, bool isInsideArea, fl
             spk_flag = true;
         }
         // 音が出ていて，発音時間が過ぎたら音を消す
-        else if(spk_flag == true && (current_time - speaker_last_change_time) < sound_duration){
+        else if(spk_flag == true && (current_time - speaker_last_change_time) > sound_duration){
             noTone(SPK);
             speaker_last_change_time = current_time;
             spk_flag = false;
