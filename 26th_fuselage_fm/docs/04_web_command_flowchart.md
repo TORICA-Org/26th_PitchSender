@@ -88,7 +88,32 @@ sequenceDiagram
     SD->>Global: CALIB_SIG が true であることを検出
     SD->>SD: sd.add_str("\nCALIB\n") を SD バッファへ追加 (キャリブ履歴記録)
     SD->>Global: CALIB_SIG = false にクリア
+
+    %% 5. BNO055 永続キャリブレーション (BNO_CALIB)
+    actor PC as PC (USB Serial)
+    participant BNO as BNO055.cpp (Core 0)
+    Note over PC,BNO: --- 9軸 IMU (BNO055) 永続キャリブレーション (ROM保存) ---
+    PC->>BNO: USBシリアルから "BNO_CALIB\n" を送信
+    BNO->>BNO: isWritePermitted = true (書き込み許可フラグセット)
+    Note over BNO,Global: Core 0 タスクで1秒周期で BNO_Calib() を実行
+    BNO->>BNO: sys, gyro, accel, mag が全て 3 (完了) か判定
+    BNO->>Global: Preferences API で NVS (Flash ROM) へ offsets を保存
+    BNO->>BNO: isWritePermitted = false にクリア
 ```
+
+---
+
+### 2.1 BNO055 キャリブレーションの NVS (ROM) 保存と起動時復元
+
+BNO055 は高い精度を持つ 9軸センサですが、電源を切るたびに磁気やジャイロのキャリブレーション情報が揮発してしまいます。本システムでは ESP32 の内蔵不揮発性メモリ (NVS: Non-Volatile Storage) を利用し、一度行ったキャリブレーション状態を ROM に保存・復元する機構 (`BNO055.cpp`) を実装しています。
+
+1. **起動時の自動復元 (`BNO_Calib_init`)**:
+   システムの起動時 (`setup()` 段階)、`Preferences` API を用いて NVS の `bno_data` 名前空間にアクセスします。保存された `offsets` キーが存在する場合、そのバイト列 (`adafruit_bno055_offsets_t` 構造体) を読み出し、`bno.setSensorOffsets()` を通じてセンサーへ自動的にオフセット値を流し込みます。これにより、毎回の飛行前の再キャリブレーション操作を省略できます。
+   *(※ `Adafruit_BNO055` ライブラリの `setSensorOffsets` 関数内では、自動的に `CONFIG_MODE` へ移行してオフセットを書き込んだ後、元の動作モードへ復帰する処理が行われるため安全です。)*
+
+2. **書き込みコマンドと状態監視 (`BNO_CALIB`)**:
+   USB シリアル通信 (`Serial`) 経由で PC などから `BNO_CALIB` コマンドを受信すると、フラグ `isWritePermitted` が有効化されます。
+   その後、`Core0_Task` 内で約1秒周期で呼び出される `BNO_Calib()` が、センサーの各キャリブレーションステータス (`system`, `gyro`, `accel`, `mag`) を監視します。すべてのステータスが `3` (完全キャリブレーション完了) に達し、かつ書き込み許可フラグが立っている場合のみ、現在のオフセット値を取得して NVS に `putBytes` で書き込み保存 (フラッシュメモリへの永続化) を行い、フラグをリセットします。
 
 ---
 

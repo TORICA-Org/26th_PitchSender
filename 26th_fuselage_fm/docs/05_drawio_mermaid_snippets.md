@@ -466,6 +466,17 @@ sequenceDiagram
     SD->>Global: CALIB_SIG が true であることを検出
     SD->>SD: sd.add_str("\nCALIB\n") を SD バッファへ追加 (キャリブ履歴記録)
     SD->>Global: CALIB_SIG = false にクリア
+
+    %% 5. BNO055 永続キャリブレーション (BNO_CALIB)
+    actor PC as PC (USB Serial)
+    participant BNO as BNO055.cpp (Core 0)
+    Note over PC,BNO: --- 9軸 IMU (BNO055) 永続キャリブレーション (ROM保存) ---
+    PC->>BNO: USBシリアルから "BNO_CALIB\n" を送信
+    BNO->>BNO: isWritePermitted = true (書き込み許可フラグセット)
+    Note over BNO,Global: Core 0 タスクで1秒周期で BNO_Calib() を実行
+    BNO->>BNO: sys, gyro, accel, mag が全て 3 (完了) か判定
+    BNO->>Global: Preferences API で NVS (Flash ROM) へ offsets を保存
+    BNO->>BNO: isWritePermitted = false にクリア
 ```
 
 ---
