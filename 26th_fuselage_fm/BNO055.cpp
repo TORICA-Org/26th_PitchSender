@@ -14,6 +14,9 @@
 #include <utility/imumaths.h>
 #include "parameters.h"
 
+// ESP32のFlash memoryにアクセスしてキャリブレーション情報を保存するため
+#include <Preferences.h>
+
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
 
 bool BNO055_init(void){
@@ -66,4 +69,68 @@ void read_BNO_cal(){
   data_fslg_bno_cal_gyro   = gyro;
   data_fslg_bno_cal_accel  = accel;
   data_fslg_bno_cal_mag    = mag;
+}
+
+static Preferences prefs;
+static bool isWritePermitted = false; // コマンドによるキャリブレーション情報書き込み許可フラグ
+static String inputBuffer = "";       // シリアル受信用バッファ（コマンド用）
+
+static void checkSerialCommand();
+static void saveOffsetsToNVS(Adafruit_BNO055 &bno);
+
+void BNO_Calib_init(){
+  prefs.begin("bno_data", true); // 読み取り専用でflash読み取り
+  if (prefs.isKey("offsets")) {
+    adafruit_bno055_offsets_t savedOffsets;
+    prefs.getBytes("offsets", &savedOffsets, sizeof(savedOffsets));
+    bno.setSensorOffsets(savedOffsets);
+    Serial.println("Calibration data restored");
+  } else {
+    Serial.println("No calibration data saved");
+  }
+  prefs.end();
+}
+
+
+void BNO_Calib(uint8_t sys, uint8_t gyro, uint8_t accel, uint8_t mag) {
+  checkSerialCommand();
+  if (isWritePermitted == true){
+    Serial.printf("sys: %2d | accel: %2d | gyro: %2d | mag: %2d\n", sys, accel, gyro, mag); // キャリブレーション状態を表示
+  }
+  
+  // 書き込み許可があり，全キャリブレーションが3の時のみ保存
+  if (isWritePermitted && sys == 3 && gyro == 3 && accel == 3 && mag == 3) {
+    saveOffsetsToNVS(bno);
+    isWritePermitted = false; // 保存完了後に許可フラグを解除（次のBNO_CALIB受信まで待機）
+  }
+}
+
+static void checkSerialCommand() {
+  while (Serial.available() > 0) {
+    char c = Serial.read();
+
+    if (c == '\n' || c == '\r') {
+      inputBuffer.trim();
+      if (inputBuffer.length() > 0) {
+        if (inputBuffer == "BNO_CALIB") {
+          isWritePermitted = true; // コマンド受信ごとに書き込み許可をセット
+          Serial.println("\n[COMMAND] 'Calibration data flashing enabled");
+        }
+        inputBuffer = "";
+      }
+    } else {
+      inputBuffer += c;
+    }
+  }
+}
+
+// NVSへオフセット情報を保存する内部関数
+static void saveOffsetsToNVS(Adafruit_BNO055 &bno) {
+  adafruit_bno055_offsets_t newOffsets;
+  if (bno.getSensorOffsets(newOffsets)) {
+    prefs.begin("bno_data", false); // 書き込みモード
+    prefs.putBytes("offsets", &newOffsets, sizeof(newOffsets));
+    prefs.end();
+    Serial.println("\n [FLASHING SUCCESS] CALIBRATION DATA STORED");
+  }
 }

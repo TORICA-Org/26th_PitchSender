@@ -10,9 +10,14 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <Adafruit_BNO055.h>
 
 bool BNO055_init(void);
 
 void read_BNO(void);
 
 void read_BNO_cal(void);
+
+void BNO_Calib_init();
+
+void BNO_Calib(uint8_t sys, uint8_t gyro, uint8_t accel, uint8_t mag);

@@ -225,7 +225,7 @@ flowchart TD
         BNO_Loop["read_BNO()<br>オイラー角・クォータニオン・加速度取得"]
         BMP_Loop["read_bmp_fslg() -> calculate_bmp_altitude()<br>気圧温度取得＆標準大気高度計算"]
         BNO_Cal_Check{"BNO_counter > 100 ?<br>(約1秒おき)"}
-        BNO_Cal["read_BNO_cal()<br>sys, gyro, accel, mag キャリブステータス更新"]
+        BNO_Cal["read_BNO_cal() / BNO_Calib()<br>sys, gyro, accel, mag キャリブステータス更新"]
         GPS_Override["GPS座標更新<br>(にいじゅく未来公園デバッグ座標)"]
         Spk_Loop["run_speaker() -> speaker()<br>進入禁止区域判定 & TTC 計算により警報音出力"]
 
@@ -466,6 +466,17 @@ sequenceDiagram
     SD->>Global: CALIB_SIG が true であることを検出
     SD->>SD: sd.add_str("\nCALIB\n") を SD バッファへ追加 (キャリブ履歴記録)
     SD->>Global: CALIB_SIG = false にクリア
+
+    %% 5. BNO055 永続キャリブレーション (BNO_CALIB)
+    actor PC as PC (USB Serial)
+    participant BNO as BNO055.cpp (Core 0)
+    Note over PC,BNO: --- 9軸 IMU (BNO055) 永続キャリブレーション (ROM保存) ---
+    PC->>BNO: USBシリアルから "BNO_CALIB\n" を送信
+    BNO->>BNO: isWritePermitted = true (書き込み許可フラグセット)
+    Note over BNO,Global: Core 0 タスクで1秒周期で BNO_Calib() を実行
+    BNO->>BNO: sys, gyro, accel, mag が全て 3 (完了) か判定
+    BNO->>Global: Preferences API で NVS (Flash ROM) へ offsets を保存
+    BNO->>BNO: isWritePermitted = false にクリア
 ```
 
 ---

@@ -85,7 +85,7 @@ flowchart TD
         BNO_Loop["read_BNO()<br>オイラー角・クォータニオン・加速度取得"]
         BMP_Loop["read_bmp_fslg() -> calculate_bmp_altitude()<br>気圧温度取得＆標準大気高度計算"]
         BNO_Cal_Check{"BNO_counter > 100 ?<br>(約1秒おき)"}
-        BNO_Cal["read_BNO_cal()<br>sys, gyro, accel, mag キャリブステータス更新"]
+        BNO_Cal["read_BNO_cal() / BNO_Calib()<br>sys, gyro, accel, mag キャリブステータス更新"]
         GPS_Override["GPS座標更新<br>(にいじゅく未来公園デバッグ座標)"]
         Spk_Loop["run_speaker() -> speaker()<br>進入禁止区域判定 & TTC 計算により警報音出力"]
 
@@ -188,3 +188,19 @@ Core 1 から Bico 基板へセンサデータを返送する `transmitLog(trans
 * 偶数回 (`transmit_counter == 0`): BNO055 加速度・クォータニオン・オイラー角・キャリブレーションステータスの **計14項目** (`trans_mode = 0`) を `sprintf` でフォーマットして送信。
 * 奇数回 (`transmit_counter == 1`): BMP390 気圧・温度・高度および LSM6DSV16X 加速度・オイラー角の **計9項目** (`trans_mode = 1`) をフォーマットして送信。  
 これにより 1フレームあたりの文字データ長を半減させ、通信帯域を平滑化しています。
+
+### 3.3 FreeRTOS と ハードウェア API の活用設計
+
+本システムは、高いリアルタイム性を要求される飛行制御用ファームウェアとして、**FreeRTOS のタスク管理API**と**ESP32 固有のハードウェアAPI**を密接に組み合わせて設計されています。
+
+#### 1. FreeRTOS (RTOS カーネル API) のコア機能
+- **`xTaskCreatePinnedToCore()`**: `Core0_Task` (姿勢・音声・警報) と `Core1_Task` (UART・ロギング)、および `SD_Task` を特定の CPU コア (Core 0 または Core 1) にピン留めして生成します。これにより、I2C センサーのブロック読み出しと UART の高速シリアル受信が互いに干渉することなく完全な並列処理を実現しています。
+- **タスク同期・遅延 (`vTaskDelayUntil` / `vTaskDelay`)**: 単なる `delay()` 関数は CPU コア全体をブロックしてしまいますが、FreeRTOS の Delay 関数を使用することで、待機中 (例えば次の 10ms サンプリング周期まで) に OS が他の低優先度タスク (`SD_Task` など) に処理時間を譲る (コンテキストスイッチ) ことができ、CPU リソースを極限まで有効活用できます。
+- **`xQueueCreate` / `xQueueSend` / `xQueueReceive`**: マルチスレッド環境における安全なデータ通信 (プロセス間通信) に使用されます。キューはスレッドセーフなバッファとして機能し、Core 1 の高速ループで生成されたスナップショット (`struct LogData`) をコピー渡しすることで、SD 書き込みの遅延がメインループに一切影響を与えない非同期パイプラインを構築しています。`portMAX_DELAY` を用いることで、SD タスクはデータがキューに到着するまで CPU を消費せずにブロック待機します。
+
+#### 2. ESP32 ハードウェア API (ペリフェラルインターフェース)
+- **`Wire` (I2C バス)**: `GPIO21(SDA)` / `GPIO22(SCL)` を通じて、LSM6DSV16X (0x6A/0x6B)、BNO055 (0x28)、BMP390 (0x76) の 3つのセンサーと通信します。内部では 400kHz の Fast Mode で駆動され、レジスタからのバースト読み出し (`readRegs`) によりバスの占有時間を最小限に留めています。
+- **`Serial1` (HardwareSerial UART)**: Bico 基板との 460800 bps / 8E1 (偶数パリティ) の高速通信に用いられます。ESP32 内蔵の UART ハードウェア FIFO バッファと `setRxBufferSize(1024)` により、割り込み処理レベルで安全にシリアルデータを取り込み、メインループでのバッファ溢れを防止しています。
+- **`SPI` (SD カード)**: マイクロ SD カードへの高速データ転送のため、専用のハードウェア SPI ペリフェラル (`GPIO16`, `18`, `19`, `23`) を用います。`sd.flash()` の背後では SPI のハードウェアバッファを用いたブロック転送が行われています。
+- **GPIO と `tone()`**: `pinMode` や `digitalWrite` による LED 制御に加え、警報用スピーカーにはハードウェアタイマーを利用した `tone(SPK, freq)` による PWM (矩形波) 生成を用いており、ソフトウェアの CPU サイクルを消費せずに安定したピッチの警報音を発出します。
+- **Bluetooth A2DP API (`BluetoothA2DPSource`)**: ESP32 の内蔵 Bluetooth MAC/Baseband コアを活用し、SBC コーデックによるオーディオストリームをバックグラウンド割り込みで生成します。メインの `Core0_Task` では周波数 (`target_deltaAngle`) などを更新するのみで、実際のエンベロープ波形生成は A2DP のコールバック内でハードウェアタイマーに従って自動処理されます。
