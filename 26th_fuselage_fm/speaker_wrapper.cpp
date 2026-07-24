@@ -18,7 +18,7 @@ void run_speaker(void){
         trusted_altitude = filtered_bmp_altitude_m;
     }
 
-    speaker(data_air_sdp_airspeed_ms, trusted_altitude, takeoff, isInside, ttc);
+    speaker(filtered_airspeed_ms, trusted_altitude, takeoff, isInside, ttc);
 
     // For Debug
     // Serial.print("isInside:  ");
