@@ -6,7 +6,8 @@
 inline constexpr const char* BT_audiodevice = "WF-C510";
 
 // 許容誤差（±TOLERANCE[deg]まで許容する）.
-inline constexpr float TOLERANCE = 0.2f;
+// 初期設定：0.2deg
+inline constexpr float TOLERANCE = 0.4f;
 
 // 胴体桁基板ピン設定
 

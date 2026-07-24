@@ -104,8 +104,8 @@ void Core0_Task(void *args){
     // data_air_sdp_airspeed_ms = 10.0;
 
     // にいじゅく未来公園のど真ん中の座標
-    data_air_gps_latitude_deg = 35.461432;
-    data_air_gps_longitude_deg = 139.514524;
+    // data_air_gps_latitude_deg = 35.461432;
+    // data_air_gps_longitude_deg = 139.514524;
 
     run_speaker();
 

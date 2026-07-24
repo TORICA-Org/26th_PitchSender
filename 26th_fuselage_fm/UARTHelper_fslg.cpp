@@ -90,7 +90,11 @@ void receiveLog() {
     } else if (strstr(Bico_UART.buff, "CHG_TO") != 0) {
       // 文字列CHG_TOが含まれている場合（Change Takeoff flag）
       takeoff = !takeoff;
-      
+
+    } else if (strstr(Bico_UART.buff, "CALIB") != 0){
+      // 文字列内にCALIBが含まれている場合(IMUのゼロ点合わせの合図)
+      CALIB = true;
+
     } else {
 
       int readnum_bico = Bico_UART.parseBuffer(Bico_UART.buff);
