@@ -6,7 +6,7 @@
 inline constexpr const char* BT_audiodevice = "WF-C510";
 
 // 基準とするピッチ角（標準音が鳴る中心角度）
-#define TARGET_PITCH 3.0f
+#define TARGET_PITCH 0.0f
 
 // 許容誤差（±TOLERANCE[deg]まで許容する）.
 // 初期設定：0.2deg
