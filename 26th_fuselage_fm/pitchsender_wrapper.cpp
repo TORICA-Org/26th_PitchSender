@@ -21,10 +21,10 @@ void pitchsender_loop() {
 
   String status;
 
-  if (angles.pitch < -1 * TOLERANCE) {
+  if (angles.pitch < (TARGET_PITCH - TOLERANCE)) {
     attitude = TAIL_UP;
     status = "TAIL_UP";
-  } else if (angles.pitch > TOLERANCE) {
+  } else if (angles.pitch > (TARGET_PITCH + TOLERANCE)) {
     attitude = TAIL_DOWN;
     status = "TAIL_DOWN";
   } else {
